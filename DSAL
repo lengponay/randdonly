@@ -1,0 +1,92 @@
+
+#include <ctype.h> //for isspace
+#include <stdio.h>
+#include <stdlib.h>
+#include "tree.h"   
+
+static void visit(tnode *t);
+
+/* helper function: not part of the interface */
+static tnode *tree_do_parse(char **pp);
+
+void traverse(tnode *t, t_order to)
+{
+    if (t == NULL)
+        return;
+
+    if (to == PREORDER) {
+        visit(t);
+        traverse(t->left, to);
+        traverse(t->right, to);
+    } else if (to == INORDER) {
+        traverse(t->left, to);
+        visit(t);
+        traverse(t->right, to);
+    } else if (to == POSTORDER) {
+        traverse(t->left, to);
+        traverse(t->right, to);
+        visit(t);
+    }
+}
+
+static void visit(tnode *t)
+{
+    printf("%c ", t->symbol);
+}
+
+tnode *formTree(char tt){
+
+    tnode* newNode = malloc(sizeof(tnode));
+    if(newNode != NULL)
+    {
+        newNode->left = NULL;
+        newNode->right = NULL;
+        newNode->symbol = tt;
+    }
+
+    return newNode;
+}
+
+/* Parse a prefix expression into an expression tree */
+tnode *tree_parse_str(char *s)
+{
+    return tree_do_parse(&s);
+}
+
+
+/* Helper function to parse the prefix expression */
+static tnode *tree_do_parse(char **pp)
+{
+   
+    //(3)
+    /* clear whitespace */
+    while (isspace(**pp))
+        ++(*pp);
+    
+    char *n = *pp;
+    char p = *n;
+    ++(*pp);
+
+    tnode *node = NULL;
+    if(p != '+' || p != '*' || p != '/' || p != '-' || p != '^'){
+        node = formTree(p);
+    } 
+    else 
+    {
+        tnode *newNode = malloc(sizeof(tnode));
+
+        newNode->symbol = p;
+        newNode->left = NULL;
+        newNode->right = NULL;
+
+    }
+    if(p == '+' || p == '*' || p == '/' || p == '-' || p == '^'){
+        node->left = tree_do_parse(pp);
+        node->right = tree_do_parse(pp);
+
+        //return node;
+    } 
+   
+   return node;
+
+}
