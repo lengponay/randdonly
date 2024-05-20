@@ -1,0 +1,382 @@
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
+
+class BottomSheetPractice extends StatefulWidget {
+  const BottomSheetPractice({Key? key}) : super(key: key);
+
+  @override
+  State<BottomSheetPractice> createState() => _BottomSheetPracticeState();
+}
+
+// TODO: Part 1
+class _BottomSheetPracticeState extends State<BottomSheetPractice> {
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(milliseconds: 3000), () {
+      setState(() {
+        // TODO: Part 1 - Instruction 5
+        isLoading = true;
+
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: Text("Collection of recipes",
+              style: TextStyle(color: Color(0xFFF0F0F0))),
+          actions: const [
+            Padding(
+              padding: EdgeInsets.only(right: 19.0),
+              child: Icon(Icons.more_vert, color: Color(0xFFF0F0F0)),
+            )
+          ],
+          backgroundColor: Color(0xFF5D795F),
+          elevation: 0,
+        ),
+        body: ListView(
+            children: List.generate(
+                RecipeList.length,
+                    (index) => isLoading
+                    ? RecipeCard(recipe: RecipeList[index])
+                    : loadingShimmer(index)))
+    );
+  }
+
+  loadingShimmer(int index) {
+  // TODO: Part 1 - instruction 1-4
+  return Shimmer.fromColors(
+    baseColor : Colors.grey[300]!,
+    highlightColor : Colors.grey[100]!,
+    
+    child : Padding (
+      padding : EdgeInsets.fromLTRB(8, 16, 8, 0),
+      
+      child : Container(
+        //width : MediaQuery.of(context).size.width - 178, // Adjust width to prevent overflow
+        width : 335,
+        
+        height : 118,
+        //height: MediaQuery.of(context).size.height,
+        //width: MediaQuery.of(context).size.width,
+        decoration : BoxDecoration(
+          color : Color(0xFFF5F5F5),
+          borderRadius : BorderRadius.circular(10),
+          boxShadow: [BoxShadow(blurRadius: 4, color: Colors.black.withOpacity(0.1), offset: Offset(0, 4))]
+        ),
+         
+      ),
+    ),
+  );
+  }
+}
+
+
+// TODO: Part 2,3,4
+class RecipeCard extends StatelessWidget {
+  final Recipe recipe;
+  RecipeCard({
+    required this.recipe,
+    Key? key,
+  }) : super(key: key);
+
+  final TextEditingController feedbackController = TextEditingController();
+
+  @override
+Widget build(BuildContext context) {
+  return Padding(
+    padding: EdgeInsets.fromLTRB(8, 16, 8, 0),
+    child: GestureDetector(
+      child: Container(
+        width: double.infinity, // Set width to expand to available space
+        decoration: BoxDecoration(
+          color: Color(0xFFF5F5F5),
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              blurRadius: 4,
+              color: Colors.black.withOpacity(0.1),
+              offset: Offset(0, 4),
+            )
+          ],
+        ),
+        child: Row(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(left: 12.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.network(
+                  recipe.photo,
+                  width: 94,
+                  height: 94,
+                  fit: BoxFit.fitHeight,
+                ),
+              ),
+            ),
+            Expanded( 
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(15.0, 21, 0, 12),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      recipe.name,
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                    ),
+                    SizedBox(height: 4),
+                    // Replace Text widget with AutoSizeText for description
+                    AutoSizeText(
+                      recipe.description,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      minFontSize: 10.0, // Set a minimum font size
+                      maxFontSize: 12.0, // Set a maximum font size
+                      style: TextStyle(
+                        color: Color(0xFF878787),
+                      ),
+                    ),
+                    SizedBox(height: 14),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        for (int i = 0; i < recipe.star; i++)
+                          Icon(
+                            Icons.star,
+                            color: Color(0xFFFFC24D),
+                            size: 18,
+                          ),
+                        for (int i = 0; i < 5 - recipe.star; i++)
+                          Icon(
+                            Icons.star_outline,
+                            color: Color(0xFFA8A8A8),
+                            size: 18,
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+      onTap: () => openBottomSheetWithInfo(context, recipe),
+    ),
+  );
+}
+
+      
+  
+
+  void openBottomSheetWithInfo(BuildContext context, Recipe recipe) {
+    // TODO: Part 3 - Instruction 2
+    showModalBottomSheet(
+      context : context,
+      shape : RoundedRectangleBorder(
+        borderRadius: BorderRadius.only( topLeft: Radius.circular(50.0), topRight: Radius.circular(50.0)),
+      ),
+      backgroundColor : Color(0xFF516353).withOpacity(0.9),
+      builder: (BuildContext context) { return bottomSheet(context); },
+    );
+
+  }
+
+  
+  showAlertDialog(BuildContext context) {
+    // TODO: Part 4 - Instruction 1,2
+    return showDialog(
+      context : context,
+      builder : (BuildContext context){
+        return AlertDialog(
+          backgroundColor: Color(0xFFDBF1DA),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.all( Radius.circular(30.0))),
+          contentPadding: EdgeInsets.only(top: 10.0),
+          content: dialogContents(context)
+        );
+      },
+    );
+  }
+
+  Widget dialogContents(BuildContext context){
+    return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          const Padding(
+            padding: EdgeInsets.only(left: 23, top: 10),
+            child: Text(
+              "Feedback",
+              style: TextStyle(
+                  fontSize: 22.0,
+                  color: Color(0xFF5D795F),
+                  fontWeight: FontWeight.w600),
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(24, 16, 24, 16),
+            child: SizedBox(
+              width: 263,
+              height: 123,
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: "Please explain what you want to improve.",
+                  hintStyle:
+                  TextStyle(fontSize: 10, color: Color(0xFF9F9F9F)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    borderSide: BorderSide(color: Color(0xFF5D795F)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    borderSide: BorderSide(color: Color(0xFF5D795F)),
+                  ),
+                ),
+                maxLines: 8,
+                style: TextStyle(fontSize: 12),
+                cursorColor: Color(0xFF5D795F),
+              ),
+            ),
+          ),
+          InkWell(
+              child: Container(
+                padding: const EdgeInsets.only(top: 20.0, bottom: 20.0),
+                decoration: const BoxDecoration(
+                  color:  Color(0xFF5D795F),
+                  borderRadius:  BorderRadius.only(
+                      bottomLeft: Radius.circular(30.0),
+                      bottomRight: Radius.circular(30.0)),
+                ),
+                child: const Text(
+                  "Submit",
+                  style: TextStyle(
+                      fontSize: 22,
+                      color: Color(0xFFDBF1DA),
+                      fontWeight: FontWeight.w700),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              onTap: () => Navigator.pop(context)),
+        ]);
+  }
+  Widget bottomSheet(BuildContext context) {
+    return SizedBox(
+      height: 266,
+      child: Column(children: [
+        Container(
+          height: 176,
+          decoration: BoxDecoration(
+            color: Color(0xFFDBF1DA),
+            borderRadius: BorderRadius.only(
+                topRight: Radius.circular(30), topLeft: Radius.circular(30)),
+          ),
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(35, 23, 0, 0),
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    child: Text('Details',
+                        style: TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF5D795F))),
+                    onPressed: () {},
+                  ),
+                  TextButton(
+                    child: Text('Review',
+                        style: TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF5D795F))),
+                    onPressed: () {},
+                  ),
+                  TextButton(
+                    child: Text('Feedback',
+                        style: TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF5D795F))),
+                    onPressed: () {
+                      showAlertDialog(context);
+                    },
+                  ),
+                  SizedBox(height: 5)
+                ],
+              ),
+            ),
+          ),
+        ),
+        InkWell(
+          child: Container(
+              height: 90,
+              width: MediaQuery.of(context).size.width,
+              color: Color(0xFF5D795F),
+              child: Center(
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 15.0),
+                  child: Text('Select',
+                      style: TextStyle(
+                          fontSize: 22.0,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFFDBF1DA))),
+                ),
+              )),
+          onTap: () => Navigator.pop(context),
+        ),
+      ]),
+    );
+  }
+}
+
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: BottomSheetPractice(),
+    );
+  }
+}
+
+class Recipe {
+  final String name;
+  final String description;
+  final String photo;
+  final int star;
+  Recipe(this.name, this.description, this.photo, this.star);
+}
+
+final RecipeList = <Recipe>[
+  Recipe(
+      'Egg dishes',
+      'This dish is made with eggs and vegetables and is eaten with bread....',
+      "https://firebasestorage.googleapis.com/v0/b/new-ml-6c02d.appspot.com/o/Course2_Microproject%2CExam_image%2Ffood1.png?alt=media&token=5d80239a-41b5-4c97-8d5e-3e522897639f",
+      3),
+  Recipe(
+      'Breakfast brunch',
+      'Put blueberries and cranberries on the pancakes and a little whipped cream.....',
+      "https://firebasestorage.googleapis.com/v0/b/new-ml-6c02d.appspot.com/o/Course2_Microproject%2CExam_image%2Fcafe1.png?alt=media&token=f8dd03a3-95e9-47d7-9fb2-020c581460aa",
+      5),
+  Recipe(
+      'Meat',
+      'Grease a heated pan and grill the meat and garlic together...',
+      "https://firebasestorage.googleapis.com/v0/b/new-ml-6c02d.appspot.com/o/Course2_Microproject%2CExam_image%2Fmeat2.png?alt=media&token=73fdcd8e-b075-40f5-bb87-4ccc51472f56",
+      4),
+];
