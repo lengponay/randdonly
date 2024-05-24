@@ -1,117 +1,76 @@
 import 'package:flutter/material.dart';
-import 'package:western/widgets/itemsWidget.dart';
-class HomePage extends StatelessWidget {
+import 'package:western/pages/menu.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+
+
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _pages = 0;
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       // Icon : Icons.grid_4x4_rounded,
-      length : 4,
+      length : 5,
       child: Scaffold(
-        backgroundColor : Color.fromARGB(255, 213, 154, 82),
+        backgroundColor : Color.fromARGB(255, 94, 134, 143),
         body : SafeArea(
           child: Padding(
             padding: EdgeInsets.only(top : 4),
-            child : Column(
-               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal : 15),
-                  child : Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                   children : [
-                      InkWell(
-                        onTap : (){},
-                        child : Icon(
-                          Icons.menu,
-                          color : Colors.white,
-                          size : 35,
-      
-                        ),
-                      ),
-                      InkWell(
-                        onTap : (){},
-                        child : Icon(
-                          Icons.search,
-                          color : Colors.white,
-                          size : 35,
-                  
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height : 15,
-                ),
-                Padding(
-                  padding : EdgeInsets.symmetric(horizontal : 15),
-                  child : Text(
-                    "FoodBites",
-                    style : TextStyle(
-                      fontSize : 32,
-                      color : Colors.white,
-                      fontWeight : FontWeight.bold,
-                    ),
-                  ),
-                ),
-                SizedBox(height : 4),
-                Padding(
-                  padding : EdgeInsets.symmetric(horizontal : 20),
-                  child : Text(
-                    "Delivery on time!",
-                    style : TextStyle(
-                      fontSize : 18,
-                      color : Color.fromARGB(255, 255, 243, 243),
-                      fontWeight : FontWeight.w300,
-                    ),
-                  ),
-                ),
-                SizedBox(height : 30,),
-                TabBar(
-                  isScrollable : true,
-                  indicator : BoxDecoration(
-                   
-                  ),
-                  labelStyle: TextStyle(
-                    fontSize : 20,
-                    color : Colors.white,
-                    fontWeight : FontWeight.bold,
-
-                  ),
-                  labelPadding : EdgeInsets.symmetric(horizontal : 20),
-                  tabs : [
-                    Tab(text : "Burger"),
-                    Tab(text : "Pizza"),
-                    Tab(text : "Pasta"),
-                    Tab(text : "Salad"),
-                    Tab(text : "Soft Drinks"),
-                    Tab(text : "Beer"),
-                  ],
-                ),
-                Flexible(
-                  flex : 1,
-                  child : TabBarView(
-                    children : [
-                      // Container(),
-                      ItemsWidget(
-                        
-                      ),
-                      Container(color: const Color.fromARGB(255, 240, 218, 216),),
-                      Container(color: const Color.fromARGB(255, 157, 140, 139),),
-                      Container(color: const Color.fromARGB(255, 169, 156, 155),),
-                      
-                    ],
-                  ),
-                ),
-                BottomNavigationBar(items: <BottomNavigationBarItem>[
-                  BottomNavigationBarItem(icon: Icon(Icons.home),label:"Home"),
-                  BottomNavigationBarItem(icon: Icon(Icons.shopping_cart_rounded),label:"cart"),
-                  BottomNavigationBarItem(icon: Icon(Icons.person),label:"Account"),
-                ],)
-              ],
-            )
           ),
-          ),
+        ),
+        bottomNavigationBar: CurvedNavigationBar(
+          backgroundColor: Colors.transparent,
+          buttonBackgroundColor: Color.fromARGB(255, 34, 131, 107),
+          color : Color.fromARGB(255, 70, 93, 87),
+          animationDuration: Duration(milliseconds: 300),
+          items: const <Widget>[
+            Icon(
+              Icons.home,
+              color: Colors.white,
+              size: 35,
+            ),
+            Icon(
+              Icons.menu_book_rounded,
+              color: Colors.white,
+              size: 35,
+             
+            ),
+            Icon(
+              Icons.shopping_cart,
+              color: Colors.white,
+              size: 35,
+            ),
+            Icon(
+              Icons.list_alt_rounded,
+              color: Colors.white,
+              size: 35,
+            ),
+            Icon(
+              Icons.account_circle,
+              color: Colors.white,
+              size: 35,
+            ),
+          ],
+          onTap: (index) {
+            if (index == 1 ) { 
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MenuPage()), 
+              );
+            } else {
+              setState(() {
+                _pages = index;
+              });
+            }
+          },
+        ),
       ),
     );
   }
