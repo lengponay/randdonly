@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:western/pages/cart.dart';
 import 'pages/homePage.dart';
 
 void main(){
@@ -23,6 +24,7 @@ class _MyAppState extends State<MyApp>{
         debugShowCheckedModeBanner: false,
         routes : {
           "/" : (context) => HomePage(),
+          "/cart" :(context) =>CartPage(),
         },
       );
     }
